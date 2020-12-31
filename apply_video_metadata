@@ -1,0 +1,38 @@
+#!/usr/bin/env ruby
+# Usage: apply_video_metadata <originals_dir> <output_dir>
+
+def originals_dir
+  raise ArgumentError, "Nonexistent originals_dir" unless Dir.exist?(ARGV[0])
+  raise ArgumentError, "Empty originals_dir" if Dir.empty?(ARGV[0])
+  Dir.new(ARGV[0])
+end
+
+def output_dir
+  raise ArgumentError, "Nonexistent output_dir" unless Dir.exist?(ARGV[1])
+  raise ArgumentError, "Empty output_dir" if Dir.empty?(ARGV[1])
+  Dir.new(ARGV[1])
+end
+
+def copy_metadata
+  originals_path = originals_dir.path
+  output_path = output_dir.path
+  output_dir.each_child do |filename|
+    next unless filename.end_with?(".mp4")
+    child_filename = File.join(output_path, filename)
+    # Assumes output files have a filename like {original}-{sequence}.mp4
+    parent_filename = File.join(originals_path, filename.gsub(/-\d+/, ''))
+    if !File.exist?(parent_filename)
+      puts "Expected output #{filename} to have a parent at #{parent_filename} but the parent file doesn't exist. Skipping."
+    end
+    command = "exiftool -TagsFromFile \"#{parent_filename}\" -xmp \"-QuickTime:Keys:GPSCoordinates<GPSPosition\" \"-QuickTime:CreationDate<XMP:xmp:CreateDate\" \"#{child_filename}\""
+    system(command)
+  end
+end
+
+def move_originals
+  # TODO
+end
+
+
+# Actual program
+copy_metadata

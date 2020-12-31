@@ -1,0 +1,3 @@
+#!/bin/bash
+LEN=${1:-20} # Default value of 20
+pwgen -Bs $LEN 1 | pbcopy; echo $(pbpaste); echo "(copied to clipboard too)"

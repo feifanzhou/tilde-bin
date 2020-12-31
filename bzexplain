@@ -1,0 +1,5 @@
+#!/bin/bash
+
+/Library/Backblaze.bzpkg/bzfilelist -explainfile $1 /tmp/bzexplainfile-report.txt &&
+cat /tmp/bzexplainfile-report.txt &&
+rm /tmp/bzexplainfile-report.txt
